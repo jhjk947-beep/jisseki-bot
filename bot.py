@@ -5,7 +5,8 @@ from datetime import datetime
 import os
 
 TOKEN = os.getenv("TOKEN")
-ALLOWED_CHANNEL = "実績"
+
+RESULT_CHANNEL = "『📝』実績"
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -24,45 +25,32 @@ class ReviewModal(Modal, title="購入実績を書く"):
     )
 
     async def on_submit(self, interaction: discord.Interaction):
+
         embed = discord.Embed(
-            title="✅ 取引完了",
+            title="📈 購入実績",
             description="```ご購入ありがとうございました```",
-            color=0x00ff88
+            color=0x5865F2
         )
 
+        embed.add_field(name="📦 商品名", value=self.商品名, inline=False)
+        embed.add_field(name="🛒 購入数量", value=f"{self.購入数量}件", inline=False)
+        embed.add_field(name="💬 感想", value=f"```{self.感想}```", inline=False)
         embed.add_field(
-            name="📦 商品情報",
-            value=f"{self.商品名}",
-            inline=False
-        )
-
-        embed.add_field(
-            name="🛒 購入数量",
-            value=f"{self.購入数量}件",
-            inline=False
-        )
-
-        embed.add_field(
-            name="💬 ご感想",
-            value=f"```{self.感想}```",
-            inline=False
-        )
-
-        embed.add_field(
-            name="🕒 取引日時",
+            name="🕒 日時",
             value=datetime.now().strftime("%Y-%m-%d %H:%M"),
-            inline=False
-        )
-
-        embed.add_field(
-            name="💎 STATUS",
-            value="Trusted Seller\n取引完了",
             inline=False
         )
 
         embed.set_footer(text=f"投稿者: {interaction.user}")
 
-        await interaction.channel.send(embed=embed)
+        result_channel = discord.utils.get(
+            interaction.guild.text_channels,
+            name=RESULT_CHANNEL
+        )
+
+        if result_channel:
+            await result_channel.send(embed=embed)
+
         await interaction.response.send_message(
             "実績を投稿しました！",
             ephemeral=True
@@ -91,12 +79,8 @@ async def on_ready():
 
 @bot.command()
 async def 設置(ctx):
-    if ctx.channel.name != ALLOWED_CHANNEL:
-        await ctx.send("このコマンドは実績チャンネルで使ってね")
-        return
-
     embed = discord.Embed(
-        title="📈 購入実績投稿",
+        title="📈 実績記入",
         description="下のボタンを押して実績を書いてください",
         color=0x5865F2
     )
