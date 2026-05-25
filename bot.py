@@ -84,7 +84,10 @@ class ReviewButton(View):
 
 @bot.event
 async def on_ready():
-    bot.add_view(ReviewButton())
+    @bot.event
+async def on_ready():
+    print(f"{bot.user} 起動完了")
+    b
     print(f"{bot.user} 起動完了")
 
 
