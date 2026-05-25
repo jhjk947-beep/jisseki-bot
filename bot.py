@@ -1,5 +1,4 @@
-import discord
-from discord.ext import commands
+discord.ext import commands
 from discord.ui import Button, View, Modal, TextInput
 from datetime import datetime
 import os
